@@ -1,6 +1,9 @@
 package GradlePlugins
 
 import jetbrains.buildServer.configs.kotlin.v10.*
+import jetbrains.buildServer.configs.kotlin.v10.projectFeatures.VersionedSettings
+import jetbrains.buildServer.configs.kotlin.v10.projectFeatures.versionedSettings
+import jetbrains.buildServer.configs.kotlin.v10.vcs.GitVcsRoot
 
 /*
 The settings script is an entry point for defining a single
@@ -27,4 +30,29 @@ project {
     uuid = "9c0cdb51-9e0c-49cb-bc7c-9ca611cc7fd3"
     extId = "GradlePlugins"
     name = "Gradle Plugins"
+
+    subProject {
+        uuid = "2c4c777e-bf5d-4eaf-8e46-eea999fdbd89"
+        extId = "GradleTeamCityPlugin"
+        name = "Gradle TeamCity Plugin"
+
+        val settingsVcs = GitVcsRoot({
+            uuid = "723408f3-cc0c-42da-b348-dedd4bc030ef"
+            extId = "TeamcitySettings"
+            name = "teamcity-settings"
+            url = "https://github.com/rodm/teamcity-settings"
+        })
+        vcsRoot(settingsVcs)
+
+        features {
+            versionedSettings {
+                id = "PROJECT_EXT_1"
+                mode = VersionedSettings.Mode.ENABLED
+                buildSettingsMode = VersionedSettings.BuildSettingsMode.PREFER_SETTINGS_FROM_VCS
+                rootExtId = "TeamcitySettings"
+                showChanges = true
+                settingsFormat = VersionedSettings.Format.KOTLIN
+            }
+        }
+    }
 }
